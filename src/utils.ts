@@ -35,12 +35,15 @@ export function isResponseValid(data: any): data is ExpectedResponse {
 /**
  * Do a regular query to get a temporary session token used in image searches
  */
-export async function getToken(query: string) {
+export async function getToken(
+  query: string,
+  fetchFn: (url: string | URL, init?: RequestInit) => Promise<Response> = fetch
+) {
   const params = new URLSearchParams({
     q: query,
   });
 
-  const res = await fetch(`${constants.baseUrl}?${params.toString()}`);
+  const res = await fetchFn(`${constants.baseUrl}?${params.toString()}`);
 
   if (!res.ok) {
     throw new Error("Failed to contact website", { cause: res });
