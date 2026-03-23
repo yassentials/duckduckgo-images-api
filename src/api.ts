@@ -36,6 +36,8 @@ export interface ImageSearchOptions {
   retries?: number;
   /** How many iterations to run through for images (default 1). Each iteration contains up to 100 results. */
   iterations?: number;
+  /** Custom fetch implementation (default: global fetch) */
+  fetchFn?: (url: string | URL, init?: RequestInit) => Promise<Response>;
 }
 
 /**
@@ -65,6 +67,9 @@ export async function* imageSearchGenerator(
     iterations: options.iterations ?? constants.maxIterations,
   };
 
+  // Use custom fetchFn or fall back to global fetch
+  const fetchFn = options.fetchFn || fetch;
+
   // Set up request details
   const token = await getToken(options.query);
   const headers = constants.headers;
@@ -88,7 +93,7 @@ export async function* imageSearchGenerator(
       attempts++;
 
       try {
-        const response = await fetch(url, { headers });
+        const response = await fetchFn(url, { headers });
 
         // Fall back to catch block if response is not okay
         if (!response.ok) {
