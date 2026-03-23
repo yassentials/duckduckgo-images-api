@@ -71,7 +71,7 @@ export async function* imageSearchGenerator(
   const fetchFn = options.fetchFn || fetch;
 
   // Set up request details
-  const token = await getToken(options.query);
+  const token = await getToken(options.query, fetchFn);
   const headers = constants.headers;
   const params = new URLSearchParams({
     o: "json",
